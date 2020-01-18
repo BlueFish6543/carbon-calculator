@@ -2,7 +2,6 @@ from flask import Flask, render_template
 from forms import UPCForm
 from config import Config
 import requests
-import pprint
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -18,20 +17,22 @@ def query_barcode(upc):
     data = r.json()
     try:
         label = data['hints'][0]['food']['label']
+        calories = data['hints'][0]['food']['nutrients']['ENERC_KCAL']
     except KeyError:
         label = ''
-    return label
+        calories = ''
+    return label, calories
 
 @app.route('/', methods=['GET', 'POST'])
 def main():
     form = UPCForm()
     if form.validate_on_submit():
-        label = query_barcode(form.data['upc'])
+        label, calories = query_barcode(form.data['upc'])
         if not label:
             pass
         else:
-            # Do something with the label
-            print(label)
+            # Do something with the label and calories data
+            print(label, calories)
     return render_template('index.html', title='Carbon footprint calculator', form=form)
 
 if __name__ == '__main__':
