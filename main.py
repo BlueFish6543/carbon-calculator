@@ -2,6 +2,7 @@ from flask import Flask, render_template
 from forms import UPCForm
 from config import Config
 import requests
+import pprint
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -15,14 +16,22 @@ def query_barcode(upc):
     }
     r = requests.get(url=url, params=params)
     data = r.json()
-    return data['label']
+    try:
+        label = data['hints'][0]['food']['label']
+    except KeyError:
+        label = ''
+    return label
 
 @app.route('/', methods=['GET', 'POST'])
 def main():
     form = UPCForm()
     if form.validate_on_submit():
         label = query_barcode(form.data['upc'])
-        # Do something with the label
+        if not label:
+            pass
+        else:
+            # Do something with the label
+            print(label)
     return render_template('index.html', title='Carbon footprint calculator', form=form)
 
 if __name__ == '__main__':
