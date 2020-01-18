@@ -1,0 +1,17 @@
+<body>
+    <img src={{ image }} alt="Plot">
+    <br>
+    <h2>Carbon footprint by food type over past 7 days</h2>
+    <table border="1">
+        <tr>
+            <th>Type</th>
+            <th>Carbon Footprint</th>
+        </tr>
+        {% for idx in range(table_data|length) %}
+        <tr>
+            <td align="center">{{ table_data[idx][0] }}</td>
+            <td align="center">{{ table_data[idx][1] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
