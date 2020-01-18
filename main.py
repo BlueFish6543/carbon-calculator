@@ -1,10 +1,11 @@
 from flask import Flask, render_template
-from forms import UPCForm
+from forms import UPCForm, UPCFileForm, UPCStringForm
 from config import Config
 import history
 import requests
 import os
 import db
+from flask import request
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -29,7 +30,22 @@ def query_barcode(upc):
 @app.route('/', methods=['GET', 'POST'])
 def main():
     form = UPCForm()
-    if form.validate_on_submit():
+    file_form = UPCFileForm()
+    string_form = UPCStringForm()
+    if file_form.validate_on_submit():
+        print("looking for image")
+        # print(form.files)
+        # image_data = form.data['image']
+        image_data = request.files[form.image.name].read()
+        print(image_data)
+        label, calories = query_barcode(image_data)
+        if not label:
+            pass
+        else:
+            # Do something with the label and calories data
+            print(label, calories)
+    elif string_form.validate_on_submit():
+        print("looking for string")
         label, calories = query_barcode(form.data['upc'])
         if not label:
             pass
