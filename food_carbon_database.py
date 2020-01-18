@@ -1,11 +1,20 @@
 import pandas as pd
+import main
 
 data = pd.read_excel(r'aaq0216_DataS2.xls')
-#df = pd.DataFrame(data, columns= ['Product','Price'])
+
 datadict = {}
 for i in range(43):
     datadict[data.iloc[i, 0]] = data.iloc[i, 1]
-print(data)
-print(datadict)
 
-#{'Wheat & Rye (Bread)': 1.57, 'Maize (Meal)': 1.7, 'Barley (Beer)': 1.18, 'Oatmeal': 2.48, 'Rice': 4.45, 'Potatoes': 0.46, 'Cassava': 1.32, 'Cane Sugar': 3.2, 'Beet Sugar': 1.81, 'Other Pulses': 1.79, 'Peas': 0.98, 'Nuts': 0.43, 'Groundnuts': 3.23, 'Soymilk': 0.98, 'Tofu': 3.16, 'Soybean Oil': 6.32, 'Palm Oil': 7.32, 'Sunflower Oil': 3.6, 'Rapeseed Oil': 3.77, 'Olive Oil': 5.42, 'Tomatoes': 2.09, 'Onions & Leeks': 0.5, 'Root Vegetables': 0.43, 'Brassicas': 0.51, 'Other Vegetables': 0.53, 'Citrus Fruit': 0.39, 'Bananas': 0.86, 'Apples': 0.43, 'Berries & Grapes': 1.53, 'Wine': 1.79, 'Other Fruit': 1.05, 'Coffee': 28.53, 'Dark Chocolate': 46.65, 'Bovine Meat (beef herd)': 99.48, 'Bovine Meat (dairy herd)': 33.3, 'Lamb & Mutton': 39.72, 'Pig Meat': 12.31, 'Poultry Meat': 9.87, 'Milk': 3.15, 'Cheese': 23.88, 'Eggs': 4.67, 'Fish (farmed)': 13.63, 'Crustaceans (farmed)': 26.87}
+def calc_emissions(UPC): #017082884022 05100023355
+    product = main.query_barcode(UPC) 
+
+    if product[0].find('Beef') != -1: #ie beef found
+        footprint = datadict['Bovine Meat (beef herd)']*product[1]/400 #starch is 1000kcal
+
+    return footprint
+
+
+#print(calc_emissions('017082884022')) #beef jerky example
+#{'Wheat & Rye (Bread)': 0.6, 'Maize (Meal)': 0.4, 'Barley (Beer)': 0.2, 'Oatmeal': 0.9, 'Rice': 1.2, 'Potatoes': 0.6, 'Cassava': 1.4, 'Cane Sugar': 3.2, 'Beet Sugar': 1.8, 'Other Pulses': 0.8, 'Peas': 0.4, 'Nuts': 0.3, 'Groundnuts': 1.2, 'Soymilk': 1.0, 'Tofu': 2.0, 'Soybean Oil': 6.3, 'Palm Oil': 7.3, 'Sunflower Oil': 3.6, 'Rapeseed Oil': 3.8, 'Olive Oil': 5.4, 'Tomatoes': 2.1, 'Onions & Leeks': 0.5, 'Root Vegetables': 0.4, 'Brassicas': 0.5, 'Other Vegetables': 0.5, 'Citrus Fruit': 0.4, 'Bananas': 0.9, 'Apples': 0.4, 'Berries & Grapes': 1.5, 'Wine': 0.1, 'Other Fruit': 1.1, 'Coffee': 0.4, 'Dark Chocolate': 2.3, 'Bovine Meat (beef herd)': 50.0, 'Bovine Meat (dairy herd)': 17.0, 'Lamb & Mutton': 20.0, 'Pig Meat': 7.6, 'Poultry Meat': 5.7, 'Milk': 3.2, 'Cheese': 11.0, 'Eggs': 4.2, 'Fish (farmed)': 6.0, 'Crustaceans (farmed)': 18.0}
