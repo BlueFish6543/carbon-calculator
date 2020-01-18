@@ -37,5 +37,4 @@ def calc_emissions_pic(labels): #017082884022 05100023355
                 footprint = datadict[foods[food][0]]*700/foods[food][1] #guess average portion 700kcal
                 return footprint, food
 
-
 print(calc_emissions_pic(labels))
