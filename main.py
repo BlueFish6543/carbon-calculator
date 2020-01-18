@@ -2,7 +2,7 @@ from flask import Flask, render_template
 from forms import UPCForm
 from config import Config
 import requests
-from db import store_data, get_data, delete_data
+import db
 
 app = Flask(__name__)
 app.config.from_object(Config)

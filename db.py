@@ -3,10 +3,11 @@ import datetime
 
 datastore_client = datastore.Client()
 
-def store_data(value):
+def store_data(footprint, food_type):
     entity = datastore.Entity(key=datastore_client.key('entry'))
     entity.update({
-        'footprint': value,
+        'footprint': footprint,
+        'type': food_type,
         'timestamp': datetime.datetime.now(),
         'year': datetime.datetime.now().year,
         'month': datetime.datetime.now().month,
