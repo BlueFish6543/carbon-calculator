@@ -2,6 +2,7 @@ from flask import Flask, render_template
 from forms import UPCForm
 from config import Config
 import requests
+from db import store_data, get_data, delete_data
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -32,7 +33,8 @@ def main():
             pass
         else:
             # Do something with the label and calories data
-            print(label, calories)
+            pass
+            
     return render_template('index.html', title='Carbon footprint calculator', form=form)
 
 if __name__ == '__main__':
