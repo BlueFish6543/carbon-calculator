@@ -10,8 +10,8 @@ def main():
 
 	# Image.open('pyzbar/tests/code128.png')
 
-	for file in os.listdir("barcodes"):
-		img_data = Image.open(os.path.join("barcodes", file))
+	for file in os.listdir("carbon-calculator/barcodes"):
+		img_data = Image.open(os.path.join("carbon-calculator/barcodes", file))
 		print(file)
 		barc = get_barcode_from_image(img_data)
 		# print(barc)
