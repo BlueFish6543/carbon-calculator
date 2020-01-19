@@ -31,7 +31,6 @@ def plot(n):
 
 def sort_types():
     today = datetime.date.today()
-
     dictionary = {}
     for i in range(7):
         date = today - datetime.timedelta(i)
@@ -49,7 +48,7 @@ def plot_pie_chart():
     data = sort_types()
     foods = [data[i][0] for i in range(len(data))]
     emissions = [data[i][1] for i in range(len(data))]
-    plt.pie(emissions, labels=foods)
+    plt.pie(emissions, labels=foods, autopct='%1.0f%%')
     plt.savefig(os.path.join('static', 'tmp', 'tmp2.png'))
 
 def weekly_average(today): #today = when 'today' is, either actually today or one week ago
