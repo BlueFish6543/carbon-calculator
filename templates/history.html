@@ -3,6 +3,11 @@
 </head>
 
 <body>
+    <p>Choose date range:</p>
+    <form action="/history" enctype="multipart/form-data" method="POST">
+        <input type="number" name="range" min="7" max="30" step="1" value="7" required>
+        <input type="submit" value="Update">
+    </form>
     <img src={{ image }} alt="Plot">
     <br>
     <p>{{ reduction }}</p>

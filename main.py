@@ -1,10 +1,11 @@
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, request
 from werkzeug.utils import secure_filename
 from forms import UPCForm, UPCFileForm, UPCStringForm
 from config import Config
 import history
 import requests
 import os
+import datetime
 import db
 from food_carbon_database import calc_emissions
 from food_scan import detect, calc_emissions_pic
@@ -31,6 +32,7 @@ def query_barcode(upc):
     return label, calories
 
 text = ""
+date_range = 7
 
 @app.route('/', methods=['GET', 'POST'])
 def main():
@@ -92,11 +94,24 @@ def main():
 
 @app.route('/history', methods=['GET', 'POST'])
 def show_history():
-    history.plot()
+    global date_range
+    try:
+        date_range = int(request.form['range'])
+    except KeyError:
+        date_range = 7
+    history.plot(date_range)
     table_data = history.sort_types()
-    filename = os.path.join(app.config['UPLOAD_FOLDER'], 'tmp.png')
+    filename = os.path.join(app.config['UPLOAD_FOLDER'], 'tmp.png?{}'.format(datetime.time()))
     reduction = history.weekly_improvement()
     return render_template('history.html', image=filename, table_data=table_data, reduction=reduction)
+
+@app.after_request
+def adding_header_content(head):
+    head.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    head.headers["Pragma"] = "no-cache"
+    head.headers["Expires"] = "0"
+    head.headers['Cache-Control'] = 'public, max-age=0'
+    return head
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8080, debug=True)

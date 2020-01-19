@@ -5,11 +5,11 @@ import datetime
 import db
 import os
 
-def plot():
+def plot(n):
     today = datetime.date.today()
 
     footprints, dates = [], []
-    for i in reversed(range(7)):
+    for i in reversed(range(n)):
         date = today - datetime.timedelta(i)
         dates.append(str(date))
         data = db.get_data_by_date(date.year, date.month, date.day)
