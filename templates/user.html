@@ -1,6 +1,6 @@
 <html>
 <head>
-  <title>Datastore and Firebase Auth Example</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/index.css') }}">
 
   <!-- The core Firebase JS SDK is always required and must be listed first -->
   <script src="https://www.gstatic.com/firebasejs/7.7.0/firebase-app.js"></script>
@@ -47,26 +47,41 @@
 <body>
 
 <!-- [START gae_python37_auth_firebase_html] -->
-<h1>Datastore and Firebase Auth Example</h1>
+<h1 class="flex flex-row flex-center">Carbon Footprint Calculator</h1>
 
 <div id="firebaseui-auth-container"></div>
 
-<button id="sign-out" hidden=true>Sign Out</button>
-
 <div id="login-info" hidden=true>
-  <h2>Login info:</h2>
+  <h2 class="flex flex-center flex-row">Login info:</h2>
   {% if user_data %}
     <dl>
-      <dt>Name</dt><dd>{{ user_data['name'] }}</dd>
-      <dt>Email</dt><dd>{{ user_data['email'] }}</dd>
-      <dt>Last 10 visits</dt><dd>
-	{% for time in times %}
-          <p>{{ time['timestamp'] }}</p>
+      <div class="flex flex-row flex-center">
+      <dt>Name:</dt><dd>{{ user_data['name'] }}</dd>
+      </div>
+      <br>
+      <div class="flex flex-row flex-center">
+      <dt>Email:</dt><dd>{{ user_data['email'] }}</dd>
+      </div>
+      <br>
+      <dt class="flex flex-row flex-center">Last 10 visits:</dt><dd>
+        {% for time in times %}
+          <p class="flex flex-row flex-center">{{ time['timestamp'] }}</p>
         {% endfor %} </dd>
     </dl>
   {% elif error_message %}
     <p>Error: {{ error_message }}</p>
   {% endif %}
+<div class="flex flex-center flex-row">
+<form>
+  <button id="sign-out" hidden=true>Sign out</button>
+</form>
+<form action="/add" method="post">
+  <button type="submit">Add food item</button>
+</form>
+<form action="/history" method="post">
+  <button type="submit">View history</button>
+</form>
+</div>
 </div>
 <!-- [END gae_python37_auth_firebase_html] -->
 </body>

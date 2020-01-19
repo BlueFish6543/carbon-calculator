@@ -8,17 +8,17 @@ h1 {
 }
 
 h2 {
-    font-weight: lighter;
+    font-weight: normal;
     font-size: 20;    
 }
 
 h3 {
-    font-weight: lighter;
+    font-weight: normal;
     font-size: 18;
 }
 
 .subtitle {
-    font-weight: lighter;
+    font-weight: normal;
     font-size: 35;
 }
 
