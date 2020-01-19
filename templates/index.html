@@ -1,14 +1,18 @@
-<h1>Test</h1>
+<head>
+    <h1>Test</h1>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/index.css') }}">
+</head>
+
 <form action="" method="post" novalidate enctype="multipart/form-data">
     {{ form.hidden_tag() }}
-    <p>
+    <h2>
         {{ form.upc.label }}<br>
         {{ form.upc(size=32) }}
-    </p>
-    <p>
-    	{{form.image.label }}<br>
-    	{{form.image }}
-    </p>
+    </h2>
+    <h2>
+    	{{form.image.label}}<br>
+    	{{form.image}}
+    </h2>
     <p>{{ form.submit() }}</p>
     <p>{{ form.barcode_submit() }}</p>
     {% autoescape false %}
