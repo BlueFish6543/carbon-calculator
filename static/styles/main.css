@@ -7,7 +7,8 @@ h2 {
   }
 
   th {
-    color: red;
-    text-align: center;
+    font-family: 'Segoe UI';
+    text-align: left;
+    color: darkgrey;
   }
   

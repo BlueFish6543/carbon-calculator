@@ -1,5 +1,5 @@
 h1 {
-    background-color: #DFB887;
+    font-family: 'Segoe UI';
     height: 35px;
     width: 100%;
     opacity: .9;
@@ -7,7 +7,8 @@ h1 {
   }
 
   p {
-    color: red;
-    text-align: center;
+    font-family: 'Segoe UI';
+    text-align: left;
+    color: darkgrey;
   }
   
