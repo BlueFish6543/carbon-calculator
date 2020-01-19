@@ -3,7 +3,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import datetime
 import db
-import json
+import os
 
 def plot():
     today = datetime.date.today()
@@ -26,7 +26,7 @@ def plot():
     plt.xticks(x_pos, dates, rotation=45)
     plt.grid()
     plt.tight_layout()
-    plt.savefig('static/tmp/tmp.png')
+    plt.savefig(os.path.join('static', 'tmp', 'tmp.png'))
 
 def sort_types():
     today = datetime.date.today()
