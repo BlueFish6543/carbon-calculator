@@ -95,7 +95,8 @@ def show_history():
     history.plot()
     table_data = history.sort_types()
     filename = os.path.join(app.config['UPLOAD_FOLDER'], 'tmp.png')
-    return render_template('history.html', image=filename, table_data=table_data)
+    reduction = history.weekly_improvement()
+    return render_template('history.html', image=filename, table_data=table_data, reduction=reduction)
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8080, debug=True)

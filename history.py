@@ -61,15 +61,12 @@ def weekly_improvement():
     last_week = weekly_average(datetime.date.today() - datetime.timedelta(7)) #one week ago
 
     if last_week == 0.0:
-        return 'No data for previous week.'
+        text = 'No data for previous week.'
 
     percentage_difference = (this_week - last_week)*100/last_week
     
     if percentage_difference >= 0:
-        return "You're carbon footprint increased by " + str(round(percentage_difference, 1)) + "%" + " compared to last week."
+        text = "Your carbon footprint increased by " + str(round(percentage_difference, 1)) + "%" + " compared to last week."
     else:
-        return "You're carbon footprint decreased by " + str(abs(round(percentage_difference, 1))) + "%" + " compared to last week."
-    
-
-
-print(weekly_improvement())
+        text = "Your carbon footprint decreased by " + str(abs(round(percentage_difference, 1))) + "%" + " compared to last week."
+    return text
