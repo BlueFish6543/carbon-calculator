@@ -21,8 +21,8 @@ datastore_client = datastore.Client()
 app = Flask(__name__)
 app.config.from_object(Config)
 
-def store_time(dt):
-    entity = datastore.Entity(key=datastore_client.key('visit'))
+def store_time(dt, email):
+    entity = datastore.Entity(key=datastore_client.key('{}-visit'.format(email)))
     entity.update({
         'timestamp': dt
     })
@@ -30,8 +30,8 @@ def store_time(dt):
     datastore_client.put(entity)
 
 
-def fetch_times(limit):
-    query = datastore_client.query(kind='visit')
+def fetch_times(limit, email):
+    query = datastore_client.query(kind='{}-visit'.format(email))
     query.order = ['-timestamp']
 
     times = query.fetch(limit=limit)
@@ -75,6 +75,7 @@ def user():
             # http://flask.pocoo.org/docs/1.0/quickstart/#sessions).
             claims = google.oauth2.id_token.verify_firebase_token(
                 id_token, firebase_request_adapter)
+            print(claims)
         except ValueError as exc:
             # This will be raised if the token is expired or any other
             # verification checks fail.
@@ -83,8 +84,8 @@ def user():
         # Record and fetch the recent times a logged-in user has accessed
         # the site. This is currently shared amongst all users, but will be
         # individualized in a following step.
-        store_time(datetime.datetime.now())
-        times = fetch_times(10)
+        store_time(datetime.datetime.now(), claims['email'])
+        times = fetch_times(10, claims['email'])
 
     return render_template(
         'user.html',
