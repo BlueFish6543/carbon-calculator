@@ -83,15 +83,15 @@ def authenticate():
         # Record and fetch the recent times a logged-in user has accessed
         # the site. This is currently shared amongst all users, but will be
         # individualized in a following step.
-        store_time(datetime.datetime.now(), claims['email'])
-        times = fetch_times(10, claims['email'])
+        if claims is not None:
+            store_time(datetime.datetime.now(), claims['email'])
+            times = fetch_times(10, claims['email'])
     
     return claims, error_message, times
 
 @app.route('/')
 def user():
     claims, error_message, times = authenticate()
-
     return render_template(
         'user.html',
         user_data=claims, error_message=error_message, times=times)
