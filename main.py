@@ -58,8 +58,7 @@ def query_barcode(upc):
 text = ""
 date_range = 7
 
-@app.route('/')
-def user():
+def authenticate():
     # Verify Firebase auth.
     id_token = request.cookies.get("token")
     error_message = None
@@ -86,13 +85,23 @@ def user():
         # individualized in a following step.
         store_time(datetime.datetime.now(), claims['email'])
         times = fetch_times(10, claims['email'])
+    
+    return claims, error_message, times
+
+@app.route('/')
+def user():
+    claims, error_message, times = authenticate()
 
     return render_template(
         'user.html',
         user_data=claims, error_message=error_message, times=times)
 
-@app.route('/addfood', methods=['GET', 'POST'])
+@app.route('/add', methods=['GET', 'POST'])
 def main():
+    claims, error_message, times = authenticate()
+    if claims is None:
+        return redirect(url_for('user'))
+    
     global text
     form = UPCForm()
     file_form = UPCFileForm()
@@ -117,7 +126,7 @@ def main():
                     try:
                         footprint, food_type = calc_emissions((label, calories))
                         footprint = round(float(footprint), 1)
-                        db.store_data(footprint, food_type)
+                        db.store_data(footprint, food_type, email=claims['email'])
                         text += "<br>Success!<br>Label: {}<br>Food type: {}<br>Carbon footprint: {} kg CO2".format(label, food_type, footprint)
                     except ValueError:
                         text += "<br>Unable to obtain carbon footprint."
@@ -127,7 +136,7 @@ def main():
             try:
                 footprint, food_type = calc_emissions_pic(labels)
                 footprint = round(float(footprint), 1)
-                db.store_data(footprint, food_type)
+                db.store_data(footprint, food_type, email=claims['email'])
                 text = "Success!<br>Food type: {}<br>Carbon footprint: {}".format(food_type, footprint)
             except ValueError:
                 text = "Unable to obtain carbon footprint."
@@ -141,7 +150,7 @@ def main():
             try:
                 footprint, food_type = calc_emissions((label, calories))
                 footprint = round(float(footprint), 1)
-                db.store_data(footprint, food_type)
+                db.store_data(footprint, food_type, email=claims['email'])
                 text = "Success!<br>Label: {}<br>Food type: {}<br>Carbon footprint: {} kg CO2".format(label, food_type, footprint)
             except ValueError:
                 text = "Unable to obtain carbon footprint."
@@ -151,17 +160,22 @@ def main():
 
 @app.route('/history', methods=['GET', 'POST'])
 def show_history():
+    claims, error_message, times = authenticate()
+    print(claims)
+    if claims is None:
+        return redirect(url_for('user'))
+
     global date_range
     try:
         date_range = int(request.form['range'])
     except KeyError:
         date_range = 7
-    history.plot(date_range)
-    history.plot_pie_chart()
-    table_data = history.sort_types()
+    history.plot(date_range, email=claims['email'])
+    history.plot_pie_chart(email=claims['email'])
+    table_data = history.sort_types(email=claims['email'])
     filename = os.path.join(app.config['UPLOAD_FOLDER'], 'tmp.png')
     filename2 = os.path.join(app.config['UPLOAD_FOLDER'], 'tmp2.png')
-    reduction = history.weekly_improvement()
+    reduction = history.weekly_improvement(email=claims['email'])
     return render_template('history.html', image=filename, table_data=table_data, reduction=reduction, image2=filename2)
 
 @app.after_request
