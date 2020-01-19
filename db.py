@@ -15,6 +15,11 @@ def store_data(footprint, food_type, year=None, month=None, day=None):
     })
     datastore_client.put(entity)
 
+def get_all_data():
+    query = datastore_client.query(kind='entry')
+    data = list(query.fetch())
+    return data
+
 def get_data_by_date(year, month, day):
     query = datastore_client.query(kind='entry')
     query.add_filter('year', '=', year)

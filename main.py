@@ -1,11 +1,14 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect, url_for
+from werkzeug.utils import secure_filename
 from forms import UPCForm, UPCFileForm, UPCStringForm
 from config import Config
 import history
 import requests
 import os
 import db
-from flask import request
+from food_carbon_database import calc_emissions
+from food_scan import detect, calc_emissions_pic
+import barcode_reader
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -27,35 +30,64 @@ def query_barcode(upc):
         calories = ''
     return label, calories
 
+text = ""
+
 @app.route('/', methods=['GET', 'POST'])
 def main():
+    global text
     form = UPCForm()
     file_form = UPCFileForm()
     string_form = UPCStringForm()
+
     if file_form.validate_on_submit():
-        print("looking for image")
-        # print(form.files)
-        # image_data = form.data['image']
-        image_data = request.files[form.image.name].read()
-        print(image_data)
-        label, calories = query_barcode(image_data)
-        if not label:
-            pass
+        f = form.image.data
+        filename = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(f.filename))
+        f.save(filename)
+        if form.barcode_submit.data:
+            # Scan barcode and look up
+            barcode = barcode_reader.scan(filename)
+            if not barcode:
+                text = "Failed to read barcode."
+            else:
+                upc = barcode.decode('ascii')
+                text = "Barcode: {}".format(upc)
+                label, calories = query_barcode(upc)
+                if not label:
+                    text += "<br>Unable to obtain carbon footprint."
+                else:
+                    try:
+                        footprint = round(float(calc_emissions((label, calories))), 1)
+                        db.store_data(footprint, 'test')
+                        text += "<br>Success!<br>Label: {}<br>Carbon footprint: {}".format(label, footprint)
+                    except ValueError:
+                        text += "<br>Unable to obtain carbon footprint."
         else:
-            # Do something with the label and calories data
-            print(label, calories)
+            # Look up
+            labels = detect(filename)
+            try:
+                footprint = round(float(calc_emissions_pic(labels)), 1)
+                db.store_data(footprint, 'test')
+                text = "Success!<br>Carbon footprint: {}".format(footprint)
+            except ValueError:
+                text = "Unable to obtain carbon footprint."
+        return redirect(url_for('main'))
+
     elif string_form.validate_on_submit():
-        print("looking for string")
         label, calories = query_barcode(form.data['upc'])
         if not label:
-            pass
+            text = "Unable to obtain carbon footprint."
         else:
-            # Do something with the label and calories data
-            pass
+            try:
+                footprint = round(float(calc_emissions((label, calories))), 1)
+                db.store_data(footprint, 'test')
+                text = "Success!<br>Label: {}<br>Carbon footprint: {}".format(label, footprint)
+            except ValueError:
+                text = "Unable to obtain carbon footprint."
+        return redirect(url_for('main'))
 
-    return render_template('index.html', title='Carbon footprint calculator', form=form)
+    return render_template('index.html', title='Carbon footprint calculator', form=form, text=text)
 
-@app.route('/history')
+@app.route('/history', methods=['GET', 'POST'])
 def show_history():
     history.plot()
     table_data = history.sort_types()

@@ -5,24 +5,28 @@ import os
 from google.cloud import vision
 from google.cloud.vision import types
 
-# Instantiates a client
-client = vision.ImageAnnotatorClient()
 
-# The name of the image file to annotate
-file_name = os.path.abspath('chicken_test.jpg')
+def detect(src):
+    # Instantiates a client
+    client = vision.ImageAnnotatorClient()
 
-# Loads the image into memory
-with io.open(file_name, 'rb') as image_file:
-    content = image_file.read()
+    # The name of the image file to annotate
+    file_name = os.path.abspath(src)
 
-image = types.Image(content=content)
+    # Loads the image into memory
+    with io.open(file_name, 'rb') as image_file:
+        content = image_file.read()
 
-# Performs label detection on the image file
-response = client.label_detection(image=image)
-labels = response.label_annotations
+    image = types.Image(content=content)
 
-for label in labels:
-    print(label.description)
+    # Performs label detection on the image file
+    response = client.label_detection(image=image)
+    labels = response.label_annotations
+
+    return labels
+
+# for label in labels:
+#     print(label.description)
 
 
 def calc_emissions_pic(labels): #017082884022 05100023355
@@ -35,7 +39,7 @@ def calc_emissions_pic(labels): #017082884022 05100023355
         for food in foods:
             if label.description.find(food) != -1: #ie food found in description
                 footprint = datadict[foods[food][0]]*700/foods[food][1] #guess average portion 700kcal
-                return footprint, food
+                return footprint
 
 
-print(calc_emissions_pic(labels))
+# print(calc_emissions_pic(labels))

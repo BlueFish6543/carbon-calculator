@@ -26,7 +26,7 @@ def plot():
     plt.xticks(x_pos, dates, rotation=45)
     plt.grid()
     plt.tight_layout()
-    plt.savefig('static/tmp.png')
+    plt.savefig('static/tmp/tmp.png')
 
 def sort_types():
     today = datetime.date.today()
