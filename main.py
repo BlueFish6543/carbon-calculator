@@ -100,10 +100,12 @@ def show_history():
     except KeyError:
         date_range = 7
     history.plot(date_range)
+    history.plot_pie_chart()
     table_data = history.sort_types()
-    filename = os.path.join(app.config['UPLOAD_FOLDER'], 'tmp.png?{}'.format(datetime.time()))
+    filename = os.path.join(app.config['UPLOAD_FOLDER'], 'tmp.png')
+    filename2 = os.path.join(app.config['UPLOAD_FOLDER'], 'tmp2.png')
     reduction = history.weekly_improvement()
-    return render_template('history.html', image=filename, table_data=table_data, reduction=reduction)
+    return render_template('history.html', image=filename, table_data=table_data, reduction=reduction, image2=filename2)
 
 @app.after_request
 def adding_header_content(head):

@@ -27,6 +27,7 @@ def plot(n):
     plt.grid()
     plt.tight_layout()
     plt.savefig(os.path.join('static', 'tmp', 'tmp.png'))
+    plt.close()
 
 def sort_types():
     today = datetime.date.today()
@@ -43,6 +44,13 @@ def sort_types():
     
     sorted_data = sorted(dictionary.items(), key=lambda x: x[1], reverse=True)
     return sorted_data
+
+def plot_pie_chart():
+    data = sort_types()
+    foods = [data[i][0] for i in range(len(data))]
+    emissions = [data[i][1] for i in range(len(data))]
+    plt.pie(emissions, labels=foods)
+    plt.savefig(os.path.join('static', 'tmp', 'tmp2.png'))
 
 def weekly_average(today): #today = when 'today' is, either actually today or one week ago
     dates = []
