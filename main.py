@@ -5,6 +5,7 @@ from config import Config
 import history
 import requests
 import os
+import datetime
 import db
 from food_carbon_database import calc_emissions
 from food_scan import detect, calc_emissions_pic
@@ -55,6 +56,7 @@ def query_barcode(upc):
     return label, calories
 
 text = ""
+date_range = 7
 
 @app.route('/')
 def user():
@@ -112,18 +114,20 @@ def main():
                     text += "<br>Unable to obtain carbon footprint."
                 else:
                     try:
-                        footprint = round(float(calc_emissions((label, calories))), 1)
-                        db.store_data(footprint, 'test')
-                        text += "<br>Success!<br>Label: {}<br>Carbon footprint: {}".format(label, footprint)
+                        footprint, food_type = calc_emissions((label, calories))
+                        footprint = round(float(footprint), 1)
+                        db.store_data(footprint, food_type)
+                        text += "<br>Success!<br>Label: {}<br>Food type: {}<br>Carbon footprint: {} kg CO2".format(label, food_type, footprint)
                     except ValueError:
                         text += "<br>Unable to obtain carbon footprint."
         else:
             # Look up
             labels = detect(filename)
             try:
-                footprint = round(float(calc_emissions_pic(labels)), 1)
-                db.store_data(footprint, 'test')
-                text = "Success!<br>Carbon footprint: {}".format(footprint)
+                footprint, food_type = calc_emissions_pic(labels)
+                footprint = round(float(footprint), 1)
+                db.store_data(footprint, food_type)
+                text = "Success!<br>Food type: {}<br>Carbon footprint: {}".format(food_type, footprint)
             except ValueError:
                 text = "Unable to obtain carbon footprint."
         return redirect(url_for('main'))
@@ -134,9 +138,10 @@ def main():
             text = "Unable to obtain carbon footprint."
         else:
             try:
-                footprint = round(float(calc_emissions((label, calories))), 1)
-                db.store_data(footprint, 'test')
-                text = "Success!<br>Label: {}<br>Carbon footprint: {}".format(label, footprint)
+                footprint, food_type = calc_emissions((label, calories))
+                footprint = round(float(footprint), 1)
+                db.store_data(footprint, food_type)
+                text = "Success!<br>Label: {}<br>Food type: {}<br>Carbon footprint: {} kg CO2".format(label, food_type, footprint)
             except ValueError:
                 text = "Unable to obtain carbon footprint."
         return redirect(url_for('main'))
@@ -145,10 +150,26 @@ def main():
 
 @app.route('/history', methods=['GET', 'POST'])
 def show_history():
-    history.plot()
+    global date_range
+    try:
+        date_range = int(request.form['range'])
+    except KeyError:
+        date_range = 7
+    history.plot(date_range)
+    history.plot_pie_chart()
     table_data = history.sort_types()
     filename = os.path.join(app.config['UPLOAD_FOLDER'], 'tmp.png')
-    return render_template('history.html', image=filename, table_data=table_data)
+    filename2 = os.path.join(app.config['UPLOAD_FOLDER'], 'tmp2.png')
+    reduction = history.weekly_improvement()
+    return render_template('history.html', image=filename, table_data=table_data, reduction=reduction, image2=filename2)
+
+@app.after_request
+def adding_header_content(head):
+    head.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    head.headers["Pragma"] = "no-cache"
+    head.headers["Expires"] = "0"
+    head.headers['Cache-Control'] = 'public, max-age=0'
+    return head
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8080, debug=True)

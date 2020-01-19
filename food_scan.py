@@ -39,7 +39,7 @@ def calc_emissions_pic(labels): #017082884022 05100023355
         for food in foods:
             if label.description.find(food) != -1: #ie food found in description
                 footprint = datadict[foods[food][0]]*700/foods[food][1] #guess average portion 700kcal
-                return footprint
+                return footprint, food
 
 
 # print(calc_emissions_pic(labels))

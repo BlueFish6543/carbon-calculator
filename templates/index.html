@@ -1,24 +1,33 @@
 <head>
-    <h1>Test</h1>
+    <h1 class="flex flex-row flex-center">Carbon Footprint Calculator</h1>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/index.css') }}">
 </head>
 
-<form action="" method="post" novalidate enctype="multipart/form-data">
+<h2 class="flex flex-row flex-center">Enter UPC number manually, or select image file:</h2>
+<form action="" method="post" novalidate enctype="multipart/form-data" >
     {{ form.hidden_tag() }}
-    <h2>
+    <div class="flex flex-row flex-center">
+    <h3>
         {{ form.upc.label }}<br>
         {{ form.upc(size=32) }}
-    </h2>
-    <h2>
-    	{{form.image.label}}<br>
-    	{{form.image}}
-    </h2>
+    </h3>
+    </div>
+    <div class="flex flex-row flex-center">
+    <h3>
+    	{{ form.image.label }}<br>
+    	{{ form.image }}
+    </h3>
+    </div>
+    <div class="flex flex-row flex-center">
     <p>{{ form.submit() }}</p>
     <p>{{ form.barcode_submit() }}</p>
+    </div>
+    <div class="flex flex-row flex-center">
     {% autoescape false %}
     <p>{{ text }}</p>
     {% endautoescape %}
+    </div>
 </form>
-<form action="/history" method="post">
+<form action="/history" method="post" class="flex flex-row flex-center">
     <button type="submit">View history</button>
 </form>

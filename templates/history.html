@@ -1,17 +1,28 @@
 <head>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/history.css') }}">
+    <h1 class="flex flex-row flex-center">Carbon Footprint Calculator</h1>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/index.css') }}">
 </head>
 
 <body>
+    <h2 class="flex flex-row flex-center">Choose date range:</h2>
+    <form class="flex flex-row flex-center" action="/history" enctype="multipart/form-data" method="POST">
+        <input type="number" name="range" min="7" max="30" step="1" value="7" required>
+        <input type="submit" value="Update">
+    </form>
+    <div class="flex flex-row flex-center">
     <img src={{ image }} alt="Plot">
+    </div>
     <br>
-    <h2>Carbon footprint by food type over past 7 days</h2>
+    <h3 class="flex flex-row flex-center">{{ reduction }}</h3>
+    <main class="subtitle flex flex-row flex-center">Carbon Footprint by Food Type over Past 7 Days</main>
+    <div class="flex flex-row flex-center">
+    <img src={{ image2 }} alt="Plot">
+    </div>
     
-    
-    <table border="1">
+    <table class="flex flex-row flex-center">
         <tr>
-            <th>Type</th>
-            <th>Carbon Footprint</th>
+            <th align="center">Type</th>
+            <th align="center">Carbon Footprint (kg CO2)</th>
         </tr>
         {% for idx in range(table_data|length) %}
         <tr>
@@ -21,7 +32,7 @@
         {% endfor %}
     </table>
     <br>
-    <form action="/" method="post">
+    <form action="/" method="post" class="flex flex-row flex-center">
         <button type="submit">Back to main</button>
     </form>
 </body>
