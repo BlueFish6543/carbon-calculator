@@ -74,7 +74,6 @@ def authenticate():
             # http://flask.pocoo.org/docs/1.0/quickstart/#sessions).
             claims = google.oauth2.id_token.verify_firebase_token(
                 id_token, firebase_request_adapter)
-            print(claims)
         except ValueError as exc:
             # This will be raised if the token is expired or any other
             # verification checks fail.
