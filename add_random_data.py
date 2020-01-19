@@ -17,5 +17,5 @@ if __name__ == '__main__':
         n = (100 - n) / 3
         date = today - datetime.timedelta(n)
         food_type = random.choice(list(foods.keys()))
-        footprint = np.random.random() * 50
+        footprint = round(np.random.random() * 50, 1)
         db.store_data(footprint, food_type, date.year, date.month, date.day)        
