@@ -48,6 +48,7 @@ def plot_pie_chart(email):
     data = sort_types(email)
     foods = [data[i][0] for i in range(len(data))]
     emissions = [data[i][1] for i in range(len(data))]
+    fig = plt.figure()
     plt.pie(emissions, labels=foods, autopct='%1.0f%%')
     plt.savefig(os.path.join('static', 'tmp', 'tmp2.png'))
 
