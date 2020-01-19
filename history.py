@@ -66,9 +66,9 @@ def weekly_improvement():
     percentage_difference = (this_week - last_week)*100/last_week
     
     if percentage_difference >= 0:
-        return "You're carbon footprint increased by " + str(percentage_difference) + "%" + " compared to last week."
+        return "You're carbon footprint increased by " + str(round(percentage_difference, 1)) + "%" + " compared to last week."
     else:
-        return "You're carbon footprint decreased by " + str(percentage_difference) + "%" + " compared to last week."
+        return "You're carbon footprint decreased by " + str(abs(round(percentage_difference, 1))) + "%" + " compared to last week."
     
 
 
