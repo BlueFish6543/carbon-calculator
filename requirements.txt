@@ -1,0 +1,10 @@
+Flask==1.1.1
+google-cloud-datastore==1.10.0
+google-auth==1.10.0
+requests==2.22.0
+flask-wtf==0.14.2
+pandas==0.25.3
+xlrd==1.2.0
+google-cloud-vision==0.41.0
+pyzbar==0.1.8
+pillow==7.0.0

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, request
 from werkzeug.utils import secure_filename
 from forms import UPCForm, UPCFileForm, UPCStringForm
 from config import Config
@@ -9,9 +9,33 @@ import db
 from food_carbon_database import calc_emissions
 from food_scan import detect, calc_emissions_pic
 import barcode_reader
+from google.auth.transport import requests as google_requests
+from google.cloud import datastore
+import google.oauth2.id_token
+import datetime
+
+firebase_request_adapter = google_requests.Request()
+datastore_client = datastore.Client()
 
 app = Flask(__name__)
 app.config.from_object(Config)
+
+def store_time(dt):
+    entity = datastore.Entity(key=datastore_client.key('visit'))
+    entity.update({
+        'timestamp': dt
+    })
+
+    datastore_client.put(entity)
+
+
+def fetch_times(limit):
+    query = datastore_client.query(kind='visit')
+    query.order = ['-timestamp']
+
+    times = query.fetch(limit=limit)
+
+    return times
 
 def query_barcode(upc):
     url = 'https://api.edamam.com/api/food-database/parser'
@@ -32,7 +56,39 @@ def query_barcode(upc):
 
 text = ""
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
+def user():
+    # Verify Firebase auth.
+    id_token = request.cookies.get("token")
+    error_message = None
+    claims = None
+    times = None
+
+    if id_token:
+        try:
+            # Verify the token against the Firebase Auth API. This example
+            # verifies the token on each page load. For improved performance,
+            # some applications may wish to cache results in an encrypted
+            # session store (see for instance
+            # http://flask.pocoo.org/docs/1.0/quickstart/#sessions).
+            claims = google.oauth2.id_token.verify_firebase_token(
+                id_token, firebase_request_adapter)
+        except ValueError as exc:
+            # This will be raised if the token is expired or any other
+            # verification checks fail.
+            error_message = str(exc)
+
+        # Record and fetch the recent times a logged-in user has accessed
+        # the site. This is currently shared amongst all users, but will be
+        # individualized in a following step.
+        store_time(datetime.datetime.now())
+        times = fetch_times(10)
+
+    return render_template(
+        'user.html',
+        user_data=claims, error_message=error_message, times=times)
+
+@app.route('/addfood', methods=['GET', 'POST'])
 def main():
     global text
     form = UPCForm()
