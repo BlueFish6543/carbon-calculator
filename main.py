@@ -56,18 +56,20 @@ def main():
                     text += "<br>Unable to obtain carbon footprint."
                 else:
                     try:
-                        footprint = round(float(calc_emissions((label, calories))), 1)
-                        db.store_data(footprint, 'test')
-                        text += "<br>Success!<br>Label: {}<br>Carbon footprint: {}".format(label, footprint)
+                        footprint, food_type = calc_emissions((label, calories))
+                        footprint = round(float(footprint), 1)
+                        db.store_data(footprint, food_type)
+                        text += "<br>Success!<br>Label: {}<br>Food type: {}<br>Carbon footprint: {} kg CO2".format(label, food_type, footprint)
                     except ValueError:
                         text += "<br>Unable to obtain carbon footprint."
         else:
             # Look up
             labels = detect(filename)
             try:
-                footprint = round(float(calc_emissions_pic(labels)), 1)
-                db.store_data(footprint, 'test')
-                text = "Success!<br>Carbon footprint: {}".format(footprint)
+                footprint, food_type = calc_emissions_pic(labels)
+                footprint = round(float(footprint), 1)
+                db.store_data(footprint, food_type)
+                text = "Success!<br>Food type: {}<br>Carbon footprint: {}".format(food_type, footprint)
             except ValueError:
                 text = "Unable to obtain carbon footprint."
         return redirect(url_for('main'))
@@ -78,9 +80,10 @@ def main():
             text = "Unable to obtain carbon footprint."
         else:
             try:
-                footprint = round(float(calc_emissions((label, calories))), 1)
-                db.store_data(footprint, 'test')
-                text = "Success!<br>Label: {}<br>Carbon footprint: {}".format(label, footprint)
+                footprint, food_type = calc_emissions((label, calories))
+                footprint = round(float(footprint), 1)
+                db.store_data(footprint, food_type)
+                text = "Success!<br>Label: {}<br>Food type: {}<br>Carbon footprint: {} kg CO2".format(label, food_type, footprint)
             except ValueError:
                 text = "Unable to obtain carbon footprint."
         return redirect(url_for('main'))
