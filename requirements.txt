@@ -8,3 +8,5 @@ xlrd==1.2.0
 google-cloud-vision==0.41.0
 pyzbar==0.1.8
 pillow==7.0.0
+numpy==1.18.1
+matplotlib==2.1.1
