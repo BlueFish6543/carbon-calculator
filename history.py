@@ -68,8 +68,9 @@ def weekly_improvement(email):
     this_week = weekly_average(datetime.date.today(), email) #today
     last_week = weekly_average(datetime.date.today() - datetime.timedelta(7), email) #one week ago
 
-    if last_week == 0.0:
+    if not last_week:
         text = 'No data for previous week.'
+        return text
 
     percentage_difference = (this_week - last_week)*100/last_week
     
