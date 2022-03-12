@@ -7,6 +7,6 @@ pandas==0.25.3
 xlrd==1.2.0
 google-cloud-vision==0.41.0
 pyzbar==0.1.8
-pillow==7.0.0
+pillow==9.0.1
 numpy==1.18.1
 matplotlib==2.1.1
